@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ContentModelStore">
+    <e p="C:\dev\kafka-docker\kafka-cluster-lab\KafkaPlayground" t="IncludeFlat">
+      <e p="KafkaPlayground.sln" t="IncludeFlat" />
+      <e p="KafkaProduce" t="Include" />
+      <e p="KafkaProducer" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="KafkaProducer.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.2" t="Include">
+              <e p="KafkaProducer.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Program.cs" t="Include" />
+      </e>
+      <e p="packages" t="ExcludeRecursive" />
+    </e>
+    <e p="C:\Users\v-lucia.bura\.Rider2018.2\config\consoles\db" t="IncludeRecursive" />
+    <e p="C:\Users\v-lucia.bura\.Rider2018.2\system\extResources" t="IncludeRecursive" />
+    <e p="C:\Users\v-lucia.bura\.Rider2018.2\system\resharper-host\local\Transient\ReSharperHost\v182\SolutionCaches\_KafkaPlayground.1732227624.00" t="ExcludeRecursive" />
+  </component>
+</project>

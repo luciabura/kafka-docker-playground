@@ -1,0 +1,47 @@
+﻿{
+  "version": "1.0.0",
+  "restore": {
+    "projectUniqueName": "C:\\dev\\kafka-docker\\kafka-cluster-lab\\KafkaPlayground\\KafkaProducer\\KafkaProducer.csproj",
+    "projectName": "KafkaProducer",
+    "projectPath": "C:\\dev\\kafka-docker\\kafka-cluster-lab\\KafkaPlayground\\KafkaProducer\\KafkaProducer.csproj",
+    "outputPath": "C:\\dev\\kafka-docker\\kafka-cluster-lab\\KafkaPlayground\\KafkaProducer\\obj\\",
+    "projectStyle": "PackageReference",
+    "fallbackFolders": [
+      "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+    ],
+    "originalTargetFrameworks": [
+      "netcoreapp2.2"
+    ],
+    "frameworks": {
+      "netcoreapp2.2": {
+        "projectReferences": {}
+      }
+    },
+    "warningProperties": {
+      "warnAsError": [
+        "NU1605"
+      ]
+    }
+  },
+  "frameworks": {
+    "netcoreapp2.2": {
+      "dependencies": {
+        "Confluent.Kafka": {
+          "target": "Package",
+          "version": "[1.0.0-beta3, )"
+        },
+        "Microsoft.NETCore.App": {
+          "suppressParent": "All",
+          "target": "Package",
+          "version": "[2.2.0, )",
+          "autoReferenced": true
+        }
+      },
+      "imports": [
+        "net461"
+      ],
+      "assetTargetFallback": true,
+      "warn": true
+    }
+  }
+}

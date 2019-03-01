@@ -1,0 +1,81 @@
+version: "3.2"
+services:
+  zookeeper:
+    container_name: zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    ports:
+      - "32181:32181"
+    environment:
+      - ZOOKEEPER_CLIENT_PORT=32181
+    extra_hosts:
+      - "localhost: 127.0.0.1"
+      - "moby: 127.0.0.1"
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.3
+
+  kafka:
+    container_name: kafka
+    image: confluentinc/cp-kafka:latest
+    links:
+    - zookeeper
+    ports:
+      - "29092:29092"
+    extra_hosts:
+      - "localhost: 127.0.0.1"
+      - "moby: 127.0.0.1"
+    environment:
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://10.200.0.1:29092
+      KAFKA_ADVERTISED_HOST_NAME: kafka
+      KAFKA_ZOOKEEPER_CONNECT: 10.200.0.1:32181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1 
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_OPTS: -javaagent:/usr/app/jmx_prometheus_javaagent.jar=7071:/usr/app/prom-jmx-agent-config.yml
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.4
+
+  prometheus:
+    container_name: prometheus
+    ports:
+      - 9090:9090/tcp
+    image: prom/prometheus
+    volumes:
+      - ./mount/prometheus:/etc/prometheus
+    links:
+      - kafka
+    restart: always
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.5
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports:
+      - 3000:3000/tcp
+    links:
+      - prometheus
+    environment:
+        GF_SECURITY_ADMIN_PASSWORD: "admin"
+        GF_USERS_ALLOW_SIGN_UP: "false"
+        GF_AUTH_ANONYMOUS_ENABLED: "true"
+        GF_AUTH_ANONYMOUS_ORG_ROLE: "Admin"
+        GF_DASHBOARDS_JSON_ENABLED: "true"
+        GF_DASHBOARDS_JSON_PATH: /opt/grafana
+        GF_SERVER_ROOT_URL: http://10.200.0.1:3000/
+        GF_SERVER_ROUTER_LOGGING: "true"
+        GF_LOG_LEVEL: "debug"
+        GF_LOG_MODE: "console file"
+    volumes:
+       - grafana_data:/var/lib/grafana
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.7
+
+volumes:
+    grafana_data: {}
+
+networks:
+  dockernet:
+    external: true

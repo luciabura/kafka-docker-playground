@@ -1,0 +1,116 @@
+version: "3"
+services:
+  zookeeper:
+    image: "confluentinc/cp-zookeeper:latest"
+    environment:
+      ZOOKEEPER_SERVER_ID: 1
+      ZOOKEEPER_CLIENT_PORT: 32181
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: 10.200.0.2
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: WARN
+    container_name: zookeeper
+    volumes:
+      - ./volumes/zookeeper/zk-data:/var/lib/zookeeper/data
+      - ./volumes/zookeeper/zk-txn-logs:/var/lib/zookeeper/log
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.2
+
+  kafka1:
+    ports:
+      - "29092:29092"
+    image: "confluentinc/cp-kafka:latest"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 10.200.0.1:32181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:29092
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: 10.200.0.3
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: WARN
+    container_name: kafka1
+    volumes:
+      - ./volumes/kafka/broker1:/var/lib/kafka/data
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.3
+    depends_on:
+      - zookeeper
+
+  kafka2:
+    ports:
+      - "29092:29092"
+    image: "confluentinc/cp-kafka:latest"
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29092
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: 10.200.0.4
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: WARN
+    container_name: kafka2
+    volumes:
+      - ./volumes/kafka/broker2:/var/lib/kafka/data
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.4
+    depends_on:
+      - zookeeper
+      - kafka1
+
+  kafka3:
+    ports:
+      - "29092:29092"
+    image: "confluentinc/cp-kafka:latest"
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:29092
+      KAFKA_JMX_PORT: 9999
+      KAFKA_JMX_HOSTNAME: 10.200.0.5
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 3
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 3
+      KAFKA_LOG4J_ROOT_LOGLEVEL: WARN
+      KAFKA_TOOLS_LOG4J_LOGLEVEL: WARN
+    container_name: kafka3
+    volumes:
+      - ./volumes/kafka/broker3:/var/lib/kafka/data
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.5
+    depends_on:
+      - zookeeper
+      - kafka1
+      - kafka2
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    environment:
+      ZK_HOSTS: zookeeper:32181
+      KM_ARGS: -Djava.net.preferIPv4Stack=true
+    container_name: kafka-manager
+    networks:
+      dockernet:
+        ipv4_address: 10.200.0.6
+    depends_on:
+      - zookeeper
+      - kafka1
+      - kafka2
+      - kafka3
+
+networks:
+  dockernet:
+    ipam:
+      driver: bridge
+      config:
+      - subnet: 10.200.0.0/24
+        gateway: 10.200.0.1 
